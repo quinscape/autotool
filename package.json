@@ -1,18 +1,27 @@
 {
-  "name": "@fforw/autotool",
-  "version": "0.0.1",
-  "description": "Domain toolkit for Automaton",
-  "main": "index.js",
-  "repository": "git@github.com:fforw/ff-autotool.git",
-  "author": "Sven Helmberger <fforw@gmx.de>",
-  "license": "Apache-2.0",
-  "private": false,
-  "dependencies": {
-    "@graphql-tools/graphql-file-loader": "^8.0.12",
-    "@graphql-tools/load": "^8.0.12",
-    "graphql": "^16.10.0",
-    "shelljs": "^0.8.5",
-    "snake-case": "^4.0.0",
-    "yargs": "^17.7.2"
-  }
+    "name": "@fforw/autotool",
+    "version": "0.0.1",
+    "description": "Domain toolkit for Automaton",
+    "main": "index.js",
+    "repository": "git@github.com:fforw/ff-autotool.git",
+    "author": "Sven Helmberger <fforw@gmx.de>",
+    "license": "Apache-2.0",
+    "private": false,
+    "dependencies": {
+        "@graphql-tools/graphql-file-loader": "^8.0.12",
+        "@graphql-tools/load": "^8.0.12",
+        "@graphql-tools/schema": "^10.0.16",
+        "graphql": "^16.10.0",
+        "shelljs": "^0.8.5",
+        "snake-case": "^4.0.0",
+        "yargs": "^17.7.2"
+    },
+    "scripts": {
+        "test": "cross-env NODE_ENV=development mocha -R spec test/"
+    },
+    "devDependencies": {
+        "cross-env": "^7.0.3",
+        "mocha": "^11.1.0",
+        "tmp-promise": "^3.0.3"
+    }
 }

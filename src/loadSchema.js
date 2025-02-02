@@ -160,8 +160,7 @@ function getToMany(def, opts)
                 name: opts.transformName(name),
                 description,
                 type: opts.transformName(unwrapAll(type).name),
-                nonNull,
-                sourceType: opts.transformName(def.name)
+                nonNull
             })
         }
     }
@@ -249,13 +248,13 @@ function processSchema(schema, opts)
         {
             for (let j = 0; j < toMany.length; j++)
             {
-                const { name, type, sourceType } = toMany[j]
+                const { name, type } = toMany[j]
 
                 linkTables.push({
-                    name: opts.transformName(sourceType) + "_" + opts.transformName(name),
-                    left: opts.transformName(sourceType) + "_id",
+                    name: opts.transformName(def.name) + "_" + opts.transformName(name),
+                    left: opts.transformName(def.name) + "_id",
                     right: opts.transformName(type) + "_id",
-                    leftType: sourceType,
+                    leftType: opts.transformName(def.name),
                     rightType: type
                 })
             }

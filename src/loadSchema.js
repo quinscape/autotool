@@ -147,8 +147,7 @@ function getToMany(def)
                 description,
                 type: transformName(unwrapAll(type).name),
                 nonNull,
-                sourceType: transformName(def.name),
-                sourceField: transformName(name)
+                sourceType: transformName(def.name)
             })
         }
     }
@@ -180,7 +179,7 @@ function processSchema(schema, opts)
         const def = typeDefinitions[i]
         const typeName = transformName(def.name)
 
-        const backRefs = backReferences[def.name]
+        const backRefs = backReferences[def.name] || []
         const fields = getFields(def)
         const toMany = getToMany(def)
         const refs = getReferences(def)
@@ -212,7 +211,7 @@ function processSchema(schema, opts)
 
                 }
             }
-            if (backRefs)
+            if (backRefs.length)
             {
                 for (let j = 0; j < backRefs.length; j++)
                 {
@@ -236,10 +235,10 @@ function processSchema(schema, opts)
         {
             for (let j = 0; j < toMany.length; j++)
             {
-                const { name, type, sourceType, sourceField } = toMany[j]
+                const { name, type, sourceType } = toMany[j]
 
                 linkTables.push({
-                    name: transformName(sourceType) + "_" + transformName(sourceField),
+                    name: transformName(sourceType) + "_" + transformName(name),
                     left: transformName(sourceType) + "_id",
                     right: transformName(type) + "_id",
                     leftType: sourceType,

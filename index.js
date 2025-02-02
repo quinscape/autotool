@@ -49,16 +49,27 @@ import("snake-case").then(({snakeCase}) => {
         verbose: argv.verbose,
         snakeCase
     }
-
-    COMMANDS[cmd](schemaPath,opts).then(
-        schema => {
-            console.info(schema);
+    try
+    {
+        const fn = COMMANDS[cmd]
+        if (!fn)
+        {
+            throw new Error("Could not find command " + cmd)
         }
-    ).catch(e => {
-        console.error("ERROR", e)
+        fn(schemaPath,opts).then(
+            schema => {
+                console.info(schema);
+            }
+        ).catch(e => {
+            console.error("ERROR", e)
+            process.exit(2);
+        })
+    }
+    catch(e)
+    {
+        console.error("ERROR: ", e)
         process.exit(2);
-
-    })
+    }
 
 })
 

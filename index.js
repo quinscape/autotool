@@ -2,13 +2,13 @@ const create = require("./src/create")
 const db = require("./src/db")
 const config = require("./src/config")
 const domain = require("./src/domain")
+const typedocs = require("./src/typedocs")
 const Yargs = require('yargs')
     .count('verbose')
     .alias('v', 'verbose')
-    // .option('max', {
-    //     describe: 'Max clump count',
-    // })
-    // .option('min', {
+    .boolean('pretty')
+    .alias('pretty', ['p'])
+    .describe('pretty', 'Pretty print JSON outputs')    // .option('min', {
     //     describe: 'Min clump count',
     // })
     // .option('pow', {
@@ -31,6 +31,7 @@ const COMMANDS = {
     db : db,
     config : config,
     domain : domain,
+    typedocs : typedocs,
 }
 
 if (fileArgs.length < 2 || Object.keys(COMMANDS).indexOf(fileArgs[0]) < 0)
@@ -40,7 +41,8 @@ if (fileArgs.length < 2 || Object.keys(COMMANDS).indexOf(fileArgs[0]) < 0)
                 "  create\tcreate new schema file with helper definitions\n" +
                 "  db    \tPrint PostgreSQL script for the domain\n" +
                 "  config\tPrint relation config for the domain\n" + 
-                "  domain\tPrint internal domain format");
+                "  domain\tPrint internal domain format\n" +
+                "  typedocs\tPrint typedocs JSON");
     Yargs.showHelp();
     process.exit(1);
 }
@@ -52,7 +54,8 @@ import("snake-case").then(({snakeCase}) => {
     const opts = {
         verbose: argv.verbose,
         transformName: snakeCase,
-        addLinkTableData: true
+        addLinkTableData: true,
+        prettyJSON: argv.pretty
     }
     try
     {
@@ -61,11 +64,7 @@ import("snake-case").then(({snakeCase}) => {
         {
             throw new Error("Could not find command " + cmd)
         }
-        fn(schemaPath,opts).then(
-            schema => {
-                console.info(schema);
-            }
-        ).catch(e => {
+        fn(schemaPath,opts).catch(e => {
             console.error("ERROR", e)
             process.exit(2);
         })
@@ -75,6 +74,5 @@ import("snake-case").then(({snakeCase}) => {
         console.error("ERROR: ", e)
         process.exit(2);
     }
-
 })
 

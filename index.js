@@ -6,6 +6,7 @@ const typedocs = require("./src/commands/typedocs")
 const Yargs = require('yargs')
     .count('verbose')
     .alias('v', 'verbose')
+    .describe('verbose', "Print more information while processing")
     .boolean('pretty')
     .option('maxLength', {
         alias: "m",

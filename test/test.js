@@ -46,7 +46,7 @@ function testSchema(partial)
 }
 
 describe("Autotool", function () {
-    describe("Analysis", function () {
+    describe("loadSchema", function () {
 
         it("converts types", function () {
             // language=GraphQL

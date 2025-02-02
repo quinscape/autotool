@@ -1,7 +1,7 @@
 const { introspectionFromSchema } = require("graphql")
 const { GraphQLFileLoader } = require("@graphql-tools/graphql-file-loader")
 const { loadSchema : gqlLoadSchema } = require("@graphql-tools/load")
-const fs = require("node:fs")
+const fs = require("fs")
 const { unwrapAll, isList, unwrapNonNull, isNonNull} = require("./type-utils")
 
 let snakeCase
@@ -15,7 +15,6 @@ const BLACKLIST = [
     "GenericScalar",
 ]
 const SCALARS = ["BigDecimal","Boolean","Byte","Condition","Date","Int","JSONB","Long","String","Text","Timestamp"]
-
 
 function collectBackReferences(typeDefinitions)
 {
@@ -81,7 +80,7 @@ function getFields(def)
     const { fields } = def
     for (let i = 0; i < fields.length; i++)
     {
-        const {name,type,args} = fields[i]
+        const {name,type,args,description} = fields[i]
 
         const typeName = unwrapAll(type).name
 
@@ -95,6 +94,7 @@ function getFields(def)
             const nonNull = isNonNull(type)
             out.push({
                 name: snakeCase(name),
+                description,
                 type: snakeCase(typeName),
                 nonNull,
                 maxLength
@@ -111,7 +111,7 @@ function getReferences(def)
     const { fields } = def
     for (let i = 0; i < fields.length; i++)
     {
-        const {name,type,args} = fields[i]
+        const {name,type,description} = fields[i]
 
         const typeName = unwrapAll(type).name
 
@@ -120,6 +120,7 @@ function getReferences(def)
             const nonNull = isNonNull(type)
             out.push({
                 name: snakeCase(name),
+                description,
                 type: snakeCase(typeName),
                 nonNull
             })
@@ -135,7 +136,7 @@ function getToMany(def)
     const { fields } = def
     for (let i = 0; i < fields.length; i++)
     {
-        const {name,type} = fields[i]
+        const {name,type,description} = fields[i]
 
         const nonNull = isNonNull(type)
 
@@ -143,6 +144,7 @@ function getToMany(def)
         {
             out.push({
                 name: snakeCase(name),
+                description,
                 type: snakeCase(unwrapAll(type).name),
                 nonNull,
                 sourceType: snakeCase(def.name),
@@ -155,7 +157,13 @@ function getToMany(def)
 }
 
 
-
+/**
+ * Convert a GraphQL schema introspection into the internal automaton-centric format
+ *
+ * @param schema    GraphQL schema introspection
+ * @param opts      options
+ * @return {{types: *[], linkTables: *[]}}  internal format (see README.md)
+ */
 function processSchema(schema, opts)
 {
     const typeDefinitions = schema.types
@@ -179,6 +187,7 @@ function processSchema(schema, opts)
 
         processedTypes.push({
             name: typeName,
+            description: def.description,
             fields,
             refs,
             backRefs,
@@ -262,7 +271,10 @@ module.exports = function loadSchema(path, opts)
     }).then(
         schema => {
             const introspection = introspectionFromSchema(schema)
-            return processSchema(introspection.__schema, opts)
+
+            const input = introspection.__schema
+            //console.log(JSON.stringify(input, null, 4))
+            return processSchema(input, opts)
         }
     )
     .catch(error => {

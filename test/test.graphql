@@ -1,5 +1,7 @@
+"Foo desc"
 type Foo
 {
+    "Name desc"
     name: String!
     # setting maxLength to 1024
     long(m1024 : _): String
@@ -7,6 +9,7 @@ type Foo
     # Text field without limit
     text: Text
     # example of a many-to-many relation
+    "bars desc"
     bars(foos: BackReference): [Bar]
     #bazes : [Baz] # will be created from Baz.foo
 }
@@ -19,6 +22,7 @@ type Bar
 type Baz
 {
     name: String!
+    "foo desc"
     foo(bazes : BackReference): Foo
 }
 

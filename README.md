@@ -113,6 +113,8 @@ type TypeInfo
 {
     "Name of the type"
     name: String!
+    "Description of the type"
+    description: String,
     fields: [FieldInfo]!
     refs: [ReferenceInfo]!
     backRefs: [BackReferenceInfo]!
@@ -122,6 +124,8 @@ type FieldInfo
 {
     "Name of the field"
     name: String!
+    "Description of the field"
+    description: String,
     "Scalar type of the field"
     type: String!
     "True if the field cannot be null"
@@ -138,6 +142,8 @@ type ReferenceInfo
 {
     "Base name for the reference"
     name: String!
+    "Description of the reference"
+    description: String,
     "Type of the reference"
     type: String!
     "True if the reference cannot be null"
@@ -148,6 +154,8 @@ type BackReferenceInfo
 {
     "Name of the back reference field"
     name: String!
+    "Description of the source field"
+    description: String,
     "Containing type of the back reference field"
     type: String!
     "Source Type of the back reference"

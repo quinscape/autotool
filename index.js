@@ -1,6 +1,7 @@
 const create = require("./src/create")
 const db = require("./src/db")
 const config = require("./src/config")
+const domain = require("./src/domain")
 const Yargs = require('yargs')
     .count('verbose')
     .alias('v', 'verbose')
@@ -29,6 +30,7 @@ const COMMANDS = {
     create : create,
     db : db,
     config : config,
+    domain : domain,
 }
 
 if (fileArgs.length < 2 || Object.keys(COMMANDS).indexOf(fileArgs[0]) < 0)
@@ -36,7 +38,9 @@ if (fileArgs.length < 2 || Object.keys(COMMANDS).indexOf(fileArgs[0]) < 0)
     console.log("Usage: ff-autotool <command> <schema-file>");
     console.log("Commands:\n" +
                 "  create\tcreate new schema file with helper definitions\n" +
-                "  config\tPrint relation config for the domain");
+                "  db    \tPrint PostgreSQL script for the domain\n" +
+                "  config\tPrint relation config for the domain\n" + 
+                "  domain\tPrint internal domain format");
     Yargs.showHelp();
     process.exit(1);
 }

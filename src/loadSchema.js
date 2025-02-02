@@ -4,7 +4,7 @@ const { loadSchema : gqlLoadSchema } = require("@graphql-tools/load")
 const fs = require("fs")
 const { unwrapAll, isList, unwrapNonNull, isNonNull} = require("./type-utils")
 
-let snakeCase
+let transformName
 const BLACKLIST = [
     "BackReference",
     "QueryType",
@@ -43,10 +43,10 @@ function collectBackReferences(typeDefinitions)
                     }
 
                     array.push({
-                        name: snakeCase(backRefName),
-                        type: snakeCase(typeName),
-                        sourceType: snakeCase(name),
-                        sourceField: snakeCase(sourceField),
+                        name: transformName(backRefName),
+                        type: transformName(typeName),
+                        sourceType: transformName(name),
+                        sourceField: transformName(sourceField),
                     })
                 }
             }
@@ -93,9 +93,9 @@ function getFields(def)
             }
             const nonNull = isNonNull(type)
             out.push({
-                name: snakeCase(name),
+                name: transformName(name),
                 description,
-                type: snakeCase(typeName),
+                type: transformName(typeName),
                 nonNull,
                 maxLength
             })
@@ -119,9 +119,9 @@ function getReferences(def)
         {
             const nonNull = isNonNull(type)
             out.push({
-                name: snakeCase(name),
+                name: transformName(name),
                 description,
-                type: snakeCase(typeName),
+                type: transformName(typeName),
                 nonNull
             })
         }
@@ -143,12 +143,12 @@ function getToMany(def)
         if (isList(unwrapNonNull(type)))
         {
             out.push({
-                name: snakeCase(name),
+                name: transformName(name),
                 description,
-                type: snakeCase(unwrapAll(type).name),
+                type: transformName(unwrapAll(type).name),
                 nonNull,
-                sourceType: snakeCase(def.name),
-                sourceField: snakeCase(name)
+                sourceType: transformName(def.name),
+                sourceField: transformName(name)
             })
         }
     }
@@ -178,7 +178,7 @@ function processSchema(schema, opts)
     for (let i = 0; i < typeDefinitions.length; i++)
     {
         const def = typeDefinitions[i]
-        const typeName = snakeCase(def.name)
+        const typeName = transformName(def.name)
 
         const backRefs = backReferences[def.name]
         const fields = getFields(def)
@@ -232,16 +232,16 @@ function processSchema(schema, opts)
 
 
 
-        if (toMany.length)
+        if (toMany.length && opts.addLinkTableData)
         {
             for (let j = 0; j < toMany.length; j++)
             {
                 const { name, type, sourceType, sourceField } = toMany[j]
 
                 linkTables.push({
-                    name: snakeCase(sourceType) + "_" + snakeCase(sourceField),
-                    left: snakeCase(sourceType) + "_id",
-                    right: snakeCase(type) + "_id",
+                    name: transformName(sourceType) + "_" + transformName(sourceField),
+                    left: transformName(sourceType) + "_id",
+                    right: transformName(type) + "_id",
                     leftType: sourceType,
                     rightType: type
                 })
@@ -259,7 +259,7 @@ function processSchema(schema, opts)
 
 module.exports = function loadSchema(path, opts)
 {
-    snakeCase = opts.snakeCase
+    transformName = opts.transformName
 
     if (!fs.existsSync(path))
     {

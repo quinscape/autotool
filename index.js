@@ -51,7 +51,8 @@ import("snake-case").then(({snakeCase}) => {
 
     const opts = {
         verbose: argv.verbose,
-        snakeCase
+        transformName: snakeCase,
+        addLinkTableData: true
     }
     try
     {

@@ -1,13 +1,27 @@
-const create = require("./src/create")
-const db = require("./src/db")
-const config = require("./src/config")
-const domain = require("./src/domain")
-const typedocs = require("./src/typedocs")
+const create = require("./src/commands/create")
+const db = require("./src/commands/db")
+const config = require("./src/commands/config")
+const domain = require("./src/commands/domain")
+const typedocs = require("./src/commands/typedocs")
 const Yargs = require('yargs')
     .count('verbose')
     .alias('v', 'verbose')
     .boolean('pretty')
-    .alias('pretty', ['p'])
+    .option('maxLength', {
+        alias: "m",
+        describe: 'Default maximum length for String fields',
+    })
+    .default('maxLength', 100)
+    .option('precision', {
+        alias: "p",
+        describe: 'Default precision for decimal fields',
+    })
+    .default('precision', 19)
+    .option('scale', {
+        alias: "s",
+        describe: 'Default scale for decimal fields',
+    })
+    .default('scale', 2)
     .describe('pretty', 'Pretty print JSON outputs')    // .option('min', {
     //     describe: 'Min clump count',
     // })
@@ -38,7 +52,7 @@ if (fileArgs.length < 2 || Object.keys(COMMANDS).indexOf(fileArgs[0]) < 0)
 {
     console.log("Usage: ff-autotool <command> <schema-file>");
     console.log("Commands:\n" +
-                "  create\tcreate new schema file with helper definitions\n" +
+                "  create\tCreate new schema file with helper definitions\n" +
                 "  db    \tPrint PostgreSQL script for the domain\n" +
                 "  config\tPrint relation config for the domain\n" + 
                 "  domain\tPrint internal domain format\n" +
@@ -55,7 +69,10 @@ import("snake-case").then(({snakeCase}) => {
         verbose: argv.verbose,
         transformName: snakeCase,
         addLinkTableData: true,
-        prettyJSON: argv.pretty
+        prettyJSON: argv.pretty,
+        maxLength: argv.maxLength,
+        precision: argv.precision,
+        scale: argv.scale
     }
     try
     {

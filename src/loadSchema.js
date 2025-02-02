@@ -57,24 +57,29 @@ function collectBackReferences(typeDefinitions)
 }
 
 
-const maxLengthRE = /m([0-9]+)/
+const fieldArgsRE = /([mps])([0-9]+)/
 
-function getMaxLength(args)
+function getFieldTypeArgs(args, opts)
 {
+    const out = {
+        m: opts.maxLength,
+        p: opts.precision,
+        s: opts.scale
+    }
     for (let i = 0; i < args.length; i++)
     {
         const arg = args[i]
-        const m = maxLengthRE.exec(arg.name)
+        const m = fieldArgsRE.exec(arg.name)
         if (m)
         {
-            return +m[1]
+            out[m[1]] = +m[2]
         }
     }
-    return 100
+    return out
 }
 
 
-function getFields(def)
+function getFields(def, opts)
 {
     let out = []
     const { fields } = def
@@ -86,19 +91,29 @@ function getFields(def)
 
         if (SCALARS.indexOf(typeName) >= 0 && !isList(unwrapNonNull(type)))
         {
-            let maxLength  = 0
-            if (typeName === "String")
-            {
-                maxLength = getMaxLength(args)
-            }
             const nonNull = isNonNull(type)
-            out.push({
+            const fieldInfo = {
                 name: transformName(name),
                 description,
                 type: transformName(typeName),
                 nonNull,
-                maxLength
-            })
+                maxLength: null,
+                precision: null,
+                scale: null,
+            }
+
+            if (typeName === "String")
+            {
+                const fieldTypeArgs = getFieldTypeArgs(args, opts)
+                fieldInfo.maxLength = fieldTypeArgs.m
+            }
+            else if (typeName === "BigDecimal")
+            {
+                const fieldTypeArgs = getFieldTypeArgs(args, opts)
+                fieldInfo.precision = fieldTypeArgs.p
+                fieldInfo.scale = fieldTypeArgs.s
+            }
+            out.push(fieldInfo)
         }
     }
 
@@ -180,7 +195,7 @@ function processSchema(schema, opts)
         const typeName = transformName(def.name)
 
         const backRefs = backReferences[def.name] || []
-        const fields = getFields(def)
+        const fields = getFields(def, opts)
         const toMany = getToMany(def)
         const refs = getReferences(def)
 

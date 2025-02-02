@@ -1,4 +1,4 @@
-const loadSchema = require("./loadSchema")
+const loadSchema = require("../loadSchema")
 
 module.exports = function db(path,opts)
 {

@@ -24,6 +24,11 @@ ff-autotool domain schema.sql
 ```
 Prints the schema in an intermediary internal format as JSON. 
 
+```shell
+ff-autotool typedocs schema.sql
+```
+Prints the typedocs for the schema as JSON 
+
 ## Bootstrap Schema
 
 The bootstrap schema is a valid GraphQL schema with special helper types and field arguments that configure the relations 
@@ -118,6 +123,7 @@ type TypeInfo
     fields: [FieldInfo]!
     refs: [ReferenceInfo]!
     backRefs: [BackReferenceInfo]!
+    toMany: [ToManyInfo]
 }
 
 type FieldInfo
@@ -160,8 +166,20 @@ type BackReferenceInfo
     type: String!
     "Source Type of the back reference"
     sourceType: String!
-    "Source field of the back reference"
-    sourceField: String!
+}
+
+type ToManyInfo
+{
+    "Name of the left side field"
+    name: String!
+    "Description of the many-to-many relation as seen from the left side"
+    description: String
+    "Type on the right side"
+    type: String
+    "True if the left side field is non null"
+    nonNull: String
+    "Type on the left side"
+    sourceType: String
 }
 
 type LinkTableInfo
@@ -179,3 +197,28 @@ type LinkTableInfo
 }
 ```
 All type names etc within the JSON data have been converted to lowercase snake_case.
+
+### Typedocs format
+
+Typedocs is a simple format used by Automaton to collect domain documentation from various sources
+
+The JSON format is just an array of TypeDoc objects.
+
+```graphql
+
+type TypeDoc
+{
+    "Type name in camel case"
+    name: String!
+    description: String!
+    fieldDocs: [FieldDoc]
+}
+
+type FieldDoc
+{
+    "Field name in camel case"
+    name: String!
+    description: String!
+}
+
+```

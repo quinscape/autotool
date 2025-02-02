@@ -8,36 +8,31 @@ type Foo
     decimal(p10: _, s2 : _): BigDecimal
     # Text field without limit
     text: Text
-    # example of a many-to-many relation
-    "bars desc"
-    bars(foos: BackReference): [Bar]
+
+    #bars : [Bar] # will be created from Bar.foos
     #bazes : [Baz] # will be created from Baz.foo
 }
 
 type Bar
 {
     name: String!
+    decimal: BigDecimal!
+    "bars desc"
+    foo(bars: BackReference): Foo
 }
 
 type Baz
 {
     name: String!
     "foo desc"
+    # example of a many-to-many relation
     foo(bazes : BackReference): Foo
 }
 
 ### autotool helper definitions
-schema {
-    query: QueryType
-    mutation: MutationType
-}
-
-type QueryType {
-    _: Boolean
-}
-type MutationType {
-    _: Boolean
-}
+schema { query: QueryType mutation: MutationType }
+type QueryType { _: _ }
+type MutationType { _: _ }
 
 # Automaton scalars
 scalar BigDecimal

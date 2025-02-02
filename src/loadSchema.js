@@ -4,7 +4,6 @@ const { loadSchema : gqlLoadSchema } = require("@graphql-tools/load")
 const fs = require("fs")
 const { unwrapAll, isList, unwrapNonNull, isNonNull} = require("./type-utils")
 
-let transformName
 const BLACKLIST = [
     "BackReference",
     "QueryType",
@@ -16,7 +15,7 @@ const BLACKLIST = [
 ]
 const SCALARS = ["BigDecimal","Boolean","Byte","Condition","Date","Int","JSONB","Long","String","Text","Timestamp"]
 
-function collectBackReferences(typeDefinitions)
+function collectBackReferences(typeDefinitions, opts)
 {
     const backReferences = {};
     for (let i = 0; i < typeDefinitions.length; i++)
@@ -43,10 +42,10 @@ function collectBackReferences(typeDefinitions)
                     }
 
                     array.push({
-                        name: transformName(backRefName),
-                        type: transformName(typeName),
-                        sourceType: transformName(name),
-                        sourceField: transformName(sourceField),
+                        name: opts.transformName(backRefName),
+                        type: opts.transformName(typeName),
+                        sourceType: opts.transformName(name),
+                        sourceField: opts.transformName(sourceField),
                     })
                 }
             }
@@ -93,9 +92,9 @@ function getFields(def, opts)
         {
             const nonNull = isNonNull(type)
             const fieldInfo = {
-                name: transformName(name),
+                name: opts.transformName(name),
                 description,
-                type: transformName(typeName),
+                type: typeName,
                 nonNull,
                 maxLength: null,
                 precision: null,
@@ -120,7 +119,7 @@ function getFields(def, opts)
     return out
 }
 
-function getReferences(def)
+function getReferences(def, opts)
 {
     let out = []
     const { fields } = def
@@ -134,9 +133,9 @@ function getReferences(def)
         {
             const nonNull = isNonNull(type)
             out.push({
-                name: transformName(name),
+                name: opts.transformName(name),
                 description,
-                type: transformName(typeName),
+                type: opts.transformName(typeName),
                 nonNull
             })
         }
@@ -145,7 +144,7 @@ function getReferences(def)
     return out
 }
 
-function getToMany(def)
+function getToMany(def, opts)
 {
     let out = []
     const { fields } = def
@@ -158,11 +157,11 @@ function getToMany(def)
         if (isList(unwrapNonNull(type)))
         {
             out.push({
-                name: transformName(name),
+                name: opts.transformName(name),
                 description,
-                type: transformName(unwrapAll(type).name),
+                type: opts.transformName(unwrapAll(type).name),
                 nonNull,
-                sourceType: transformName(def.name)
+                sourceType: opts.transformName(def.name)
             })
         }
     }
@@ -184,7 +183,7 @@ function processSchema(schema, opts)
         .filter(
             t => t.name[0] !== "_" && BLACKLIST.indexOf(t.name) < 0 && SCALARS.indexOf(t.name) < 0
         )
-    const backReferences = collectBackReferences(typeDefinitions)
+    const backReferences = collectBackReferences(typeDefinitions, opts)
 
     const processedTypes = []
     const linkTables = []
@@ -192,12 +191,12 @@ function processSchema(schema, opts)
     for (let i = 0; i < typeDefinitions.length; i++)
     {
         const def = typeDefinitions[i]
-        const typeName = transformName(def.name)
+        const typeName = opts.transformName(def.name)
 
         const backRefs = backReferences[def.name] || []
         const fields = getFields(def, opts)
-        const toMany = getToMany(def)
-        const refs = getReferences(def)
+        const toMany = getToMany(def, opts)
+        const refs = getReferences(def, opts)
 
         processedTypes.push({
             name: typeName,
@@ -253,9 +252,9 @@ function processSchema(schema, opts)
                 const { name, type, sourceType } = toMany[j]
 
                 linkTables.push({
-                    name: transformName(sourceType) + "_" + transformName(name),
-                    left: transformName(sourceType) + "_id",
-                    right: transformName(type) + "_id",
+                    name: opts.transformName(sourceType) + "_" + opts.transformName(name),
+                    left: opts.transformName(sourceType) + "_id",
+                    right: opts.transformName(type) + "_id",
                     leftType: sourceType,
                     rightType: type
                 })
@@ -271,10 +270,8 @@ function processSchema(schema, opts)
 }
 
 
-module.exports = function loadSchema(path, opts)
+function loadSchema(path, opts)
 {
-    transformName = opts.transformName
-
     if (!fs.existsSync(path))
     {
         throw new Error("Could not find schema " + path)
@@ -297,3 +294,6 @@ module.exports = function loadSchema(path, opts)
     })
 
 }
+
+module.exports.loadSchema = loadSchema
+module.exports.processSchema = processSchema

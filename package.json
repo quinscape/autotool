@@ -1,6 +1,6 @@
 {
     "name": "@quinscape/autotool",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Domain toolkit for Automaton",
     "main": "index.js",
     "repository": "git@github.com:quinscape/autotool.git",

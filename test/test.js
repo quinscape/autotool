@@ -194,10 +194,13 @@ describe("Autotool", function () {
 
                     assert(schema.linkTables.length === 1)
                     assert(schema.linkTables[0].name === "foo_bars")
-                    assert(schema.linkTables[0].left === "foo_id")
-                    assert(schema.linkTables[0].right === "bar_id")
-                    assert(schema.linkTables[0].leftType === "foo")
-                    assert(schema.linkTables[0].rightType === "bar")
+                    assert(schema.linkTables[0].refs.length === 2)
+                    assert(schema.linkTables[0].refs[0].name === "bars")
+                    assert(schema.linkTables[0].refs[0].type === "foo")
+                    assert(schema.linkTables[0].refs[0].nonNull)
+                    assert(schema.linkTables[0].refs[1].name === null)
+                    assert(schema.linkTables[0].refs[1].type === "bar")
+                    assert(schema.linkTables[0].refs[1].nonNull)
                 }
             )
         })
@@ -260,6 +263,46 @@ describe("Autotool", function () {
                         assert(bazType.refs[0].type === "foo")
                         assert(!bazType.refs[0].nonNull)
                     }
+                }
+            )
+        })
+        it("creates link tables", function () {
+            // language=GraphQL
+            return testSchema(`
+                type Foo
+                {
+                    name: String!
+                    bars(foos: BackReference): [Bar]!
+                }
+                type Bar
+                {
+                    name: String!
+                }
+            `).then(
+                schema => {
+
+                    //console.log(JSON.stringify(schema, null, 4))
+
+                    assert(schema.types.length === 2)
+                    {
+                        const fooType = schema.types[0]
+                        assert(fooType.name === "foo")
+                    }
+                    {
+                        const barType = schema.types[1]
+                        assert(barType.name === "bar")
+                    }
+
+                    assert(schema.linkTables.length === 1)
+                    assert(schema.linkTables[0].name === "foo_bars")
+                    assert(schema.linkTables[0].refs[0].name === "bars")
+                    assert(schema.linkTables[0].refs[0].type === "foo")
+                    assert(schema.linkTables[0].refs[0].nonNull)
+                    assert(schema.linkTables[0].refs[1].name === "foos")
+                    assert(schema.linkTables[0].refs[1].type === "bar")
+                    assert(schema.linkTables[0].refs[1].nonNull)
+
+
                 }
             )
         })

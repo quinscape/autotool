@@ -144,7 +144,7 @@ function getReferences(def, opts)
     return out
 }
 
-function getToMany(def, opts)
+function getToMany(def, opts, backReferences)
 {
     let out = []
     const { fields } = def
@@ -156,10 +156,15 @@ function getToMany(def, opts)
 
         if (isList(unwrapNonNull(type)))
         {
+            const targetTypeName = unwrapAll(type).name
+            const sourceType = opts.transformName(def.name)
+            const backRef = (backReferences[targetTypeName] || []).find(b => b.sourceType === sourceType && b.sourceField === name)
+
             out.push({
                 name: opts.transformName(name),
                 description,
-                type: opts.transformName(unwrapAll(type).name),
+                type: opts.transformName(targetTypeName),
+                backRefField: backRef ? backRef.name : null,
                 nonNull
             })
         }
@@ -190,11 +195,12 @@ function processSchema(schema, opts)
     for (let i = 0; i < typeDefinitions.length; i++)
     {
         const def = typeDefinitions[i]
-        const typeName = opts.transformName(def.name)
+        const leftType = opts.transformName(def.name)
+        const typeName = leftType
 
         const backRefs = backReferences[def.name] || []
         const fields = getFields(def, opts)
-        const toMany = getToMany(def, opts)
+        const toMany = getToMany(def, opts, backReferences)
         const refs = getReferences(def, opts)
 
         processedTypes.push({
@@ -248,14 +254,22 @@ function processSchema(schema, opts)
         {
             for (let j = 0; j < toMany.length; j++)
             {
-                const { name, type } = toMany[j]
+                const { name, type, backRefField } = toMany[j]
 
                 linkTables.push({
-                    name: opts.transformName(def.name) + "_" + opts.transformName(name),
-                    left: opts.transformName(def.name) + "_id",
-                    right: opts.transformName(type) + "_id",
-                    leftType: opts.transformName(def.name),
-                    rightType: type
+                    name: leftType + "_" + name,
+                    refs: [
+                        {
+                            "name": name,
+                            "type": leftType,
+                            "nonNull": true
+                        },
+                        {
+                            "name": backRefField,
+                            "type": type,
+                            "nonNull": true
+                        }
+                    ]
                 })
             }
         }

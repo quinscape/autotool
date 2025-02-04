@@ -9,24 +9,18 @@ type Foo
     # Text field without limit
     text: Text
 
-    # example of a list field creation by back reference
-    #bars : [Bar] # will be created from Bar.foos
-    # example of a many-to-many relation
-    #bazes : [Baz] # will be created from Baz.foo
+    bar(foos: BackReference): Bar
+    bazes(foos: BackReference): [Baz]!
 }
 
 type Bar
 {
     name: String!
-    "bars desc"
-    foo(bars: BackReference): Foo
 }
 
 type Baz
 {
     name: String!
-    "foo desc"
-    foo(bazes : BackReference): Foo
 }
 
 ### autotool helper definitions

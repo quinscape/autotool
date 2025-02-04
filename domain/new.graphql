@@ -26,7 +26,7 @@
 #{
 #    name: String!
 #    "foo desc"
-#    foo(bazes : BackReference): Foo
+#    foos(bazes : BackReference): [Foo]
 #}
 
 ### autotool helper definitions

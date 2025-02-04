@@ -22,6 +22,21 @@ const Yargs = require('yargs')
         alias: "s",
         describe: 'Default scale for decimal fields',
     })
+    .option('dbOwner', {
+        alias: "o",
+        describe: 'Owner name for SQL script output',
+        default: "postgres"
+    })
+    .option('dropTables', {
+        alias: "d",
+        describe: 'Generate DROP TABLE statements in SQL script output',
+        default: false,
+        boolean: true
+    })
+    .option('dbSchema', {
+        describe: 'Database schema name to use in SQL script output.',
+        default: "public",
+    })
     .default('scale', 2)
     .describe('pretty', 'Pretty print JSON outputs')    // .option('min', {
     //     describe: 'Min clump count',
@@ -73,7 +88,10 @@ import("snake-case").then(({snakeCase}) => {
         prettyJSON: argv.pretty,
         maxLength: argv.maxLength,
         precision: argv.precision,
-        scale: argv.scale
+        scale: argv.scale,
+        dbOwner: argv.dbOwner,
+        dropTables: argv.dropTables,
+        dbSchema: argv.dbSchema
     }
     try
     {

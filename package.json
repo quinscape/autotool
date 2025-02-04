@@ -3,8 +3,8 @@
     "version": "0.0.1",
     "description": "Domain toolkit for Automaton",
     "main": "index.js",
-    "repository": "git@github.com:fforw/ff-autotool.git",
-    "author": "Sven Helmberger <fforw@gmx.de>",
+    "repository": "git@github.com:quinscape/autotool.git",
+    "author": "Sven Helmberger <sven.helmberger@dataciders.com>",
     "license": "Apache-2.0",
     "private": false,
     "dependencies": {

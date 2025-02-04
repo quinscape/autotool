@@ -5,27 +5,27 @@ Command line helpers to create a PostgreSQL database from a bootstrap GraphQL sc
 ## Usage
 
 ```shell
-ff-autotool create schema.sql
+qs-autotool create schema.sql
 ```
 Creates an empty bootstrap schema
 
 ```shell
-ff-autotool db schema.sql
+qs-autotool db schema.sql
 ```
 Prints a PostgresQL db script for the types expressed in the given schema.sql file
 
 ```shell
-ff-autotool config schema.sql
+qs-autotool config schema.sql
 ```
 Creates a Java relation config block from the relations in the given schema.sql file
 
 ```shell
-ff-autotool domain schema.sql
+qs-autotool domain schema.sql
 ```
 Prints the schema in an intermediary internal format as JSON. 
 
 ```shell
-ff-autotool typedocs schema.sql
+qs-autotool typedocs schema.sql
 ```
 Prints the typedocs for the schema as JSON 
 
@@ -90,7 +90,7 @@ type Baz { name: String! }
 ```
                
 Now both relations have a back reference `foos` which will be added as field to the respective type. Back references
-always create a *List* field in ff-autotool. If you want something as exotic as a one-to-one relation that is accessible 
+always create a *List* field in qs-autotool. If you want something as exotic as a one-to-one relation that is accessible 
 from both sides, you need to change the relation config after the fact.
                                                                        
 All relations are of course realized as foreign keys in the data base. *Foo.bar* results in just a simple foreign key 

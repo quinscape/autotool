@@ -66,7 +66,7 @@ const COMMANDS = {
 
 if (fileArgs.length < 2 || Object.keys(COMMANDS).indexOf(fileArgs[0]) < 0)
 {
-    console.log("Usage: ff-autotool <command> <schema-file>");
+    console.log("Usage: qs-autotool <command> <schema-file>");
     console.log("Commands:\n" +
                 "  create\tCreate new schema file with helper definitions\n" +
                 "  db    \tPrint PostgreSQL script for the domain\n" +

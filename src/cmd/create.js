@@ -14,7 +14,7 @@ module.exports = function create(schemaPath)
                 path.resolve(__dirname, "../domain/new.graphql"),
                 schemaPath
             )
-            resolve()
+            resolve("Empty domain with helpers written to " + schemaPath)
         }
     )
 }

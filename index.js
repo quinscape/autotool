@@ -82,7 +82,18 @@ import("snake-case").then(({snakeCase}) => {
         {
             throw new Error("Could not find command " + cmd)
         }
-        fn(schemaPath,opts).catch(e => {
+        fn(schemaPath,opts)
+            .then(output => {
+                if (typeof output === "string")
+                {
+                    console.log(output)
+                }
+                else
+                {
+                    console.log(JSON.stringify(output, null, opts.prettyJSON ? 4 : 0))
+                }
+            })
+            .catch(e => {
             console.error("ERROR", e)
             process.exit(2);
         })

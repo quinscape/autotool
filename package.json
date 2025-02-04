@@ -1,5 +1,5 @@
 {
-    "name": "@fforw/autotool",
+    "name": "@quinscape/autotool",
     "version": "0.0.1",
     "description": "Domain toolkit for Automaton",
     "main": "index.js",
@@ -23,5 +23,8 @@
         "cross-env": "^7.0.3",
         "mocha": "^11.1.0",
         "tmp-promise": "^3.0.3"
+    },
+    "bin" : {
+        "qs-autotool" : "index.js"
     }
 }

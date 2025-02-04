@@ -214,11 +214,11 @@ function processSchema(schema, opts)
 
         if (opts.verbose)
         {
-            console.log("TABLE",  typeName)
+            console.info("TABLE",  typeName)
             for (let j = 0; j < fields.length; j++)
             {
                 const {name, type, maxLength} = fields[j]
-                console.log("    ", name, ": ", type, maxLength !== 0 ? "( maxLength = " + maxLength + ")" : "")
+                console.info("    ", name, ": ", type, maxLength !== 0 ? "( maxLength = " + maxLength + ")" : "")
             }
 
             if (refs.length)
@@ -226,7 +226,7 @@ function processSchema(schema, opts)
                 for (let j = 0; j < refs.length; j++)
                 {
                     const {name,type} = refs[j]
-                    console.log("    ",name, ": -> ", type, "# ref")
+                    console.info("    ",name, ": -> ", type, "# ref")
 
                 }
             }
@@ -235,7 +235,7 @@ function processSchema(schema, opts)
                 for (let j = 0; j < backRefs.length; j++)
                 {
                     const {name, type} = backRefs[j]
-                    console.log("    ",name, ": -> ", type, "# backref")
+                    console.info("    ",name, ": -> ", type, "# backref")
                 }
             }
             if (toMany.length)
@@ -243,7 +243,7 @@ function processSchema(schema, opts)
                 for (let j = 0; j < toMany.length; j++)
                 {
                     const {name, type} = toMany[j]
-                    console.log("    ",name, ": -> ", type, "# toMany")
+                    console.info("    ",name, ": -> ", type, "# toMany")
                 }
             }
         }

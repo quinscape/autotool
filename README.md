@@ -1,4 +1,4 @@
-# @fforw/autotool
+# @quinscape/autotool
 
 Command line helpers to create a PostgreSQL database from a bootstrap GraphQL schema. 
 

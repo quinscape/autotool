@@ -5,7 +5,7 @@ module.exports = function create(schemaPath)
 {
     if (fs.existsSync(schemaPath))
     {
-        console.error("Cannot create schema" + schemaPath + ": File does already exist.")
+        throw new Error("Cannot create schema" + schemaPath + ": File does already exist.")
     }
 
     return new Promise(

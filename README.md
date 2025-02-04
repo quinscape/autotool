@@ -44,7 +44,7 @@ type Foo
     name: String!
     num: Int
     long(m1024: _) : String
-    decimal(s2: _, p10: _) : BigDecimal
+    decimal(p10: _, s2: _) : BigDecimal
     text : Text
 }
 ```
@@ -52,9 +52,9 @@ The `long` field shows how to specify a non-default maximum length for a String 
 the helper type *Text* to express that it is a text field, i.e. the field is a *String* in the final schema and has a text
 type in the database.
 
-Similarly, for `decimal` with use attributes to express that we want a scale of 2 and a precision of 10.
+Similarly, for `decimal` with use attributes to express that we want a precision of 10 and scale of 2.
 
-`_` is a type without meaning and just exists as convenient gap filler because the abused arguments formally need to have
+The underscore (`_`) is a type without meaning and just exists as convenient gap filler because the abused arguments formally need to have
 a type.
 
 All types will have an `id` field which we just ignore in the bootstrap schema.
@@ -75,7 +75,7 @@ type Bar { name: String! }
 type Baz { name: String! }
 ```
 This *Foo* has two relations. A many-to-one relation to *Bar* and a many-to-many relation with *Baz*, but both 
-relations are only accessible from *Foo*. If we want *Bar* and *Baz* to link back to *Foo* we need to use back refernces.
+relations are only accessible from *Foo*. If we want *Bar* and *Baz* to link back to *Foo* we need to use back references.
 
 ```graphql
 type Foo
@@ -186,14 +186,8 @@ type LinkTableInfo
 {
     "Link table name"
     name: String!
-    "Name of the left side/declaring side id field"
-    left: String!
-    "Name of the right side id field"
-    right: String!
-    "Name of the type on the left side/declaring side"
-    leftType: String!
-    "Name of the type on the right side"
-    rightType: String!
+    "Reference infos for the fks to both sides"
+    refs: [ReferenceInfo]!
 }
 ```
 All type names etc within the JSON data have been converted to lowercase snake_case.

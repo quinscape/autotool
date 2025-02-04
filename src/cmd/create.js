@@ -11,7 +11,7 @@ module.exports = function create(schemaPath)
     return new Promise(
         resolve => {
             shelljs.cp(
-                path.resolve(__dirname, "../domain/new.graphql"),
+                path.resolve(__dirname, "../../domain/new.graphql"),
                 schemaPath
             )
             resolve("Empty domain with helpers written to " + schemaPath)

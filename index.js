@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const create = require("./src/cmd/create")
 const db = require("./src/cmd/db")
 const config = require("./src/cmd/config")

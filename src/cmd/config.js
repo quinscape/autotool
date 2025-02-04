@@ -18,7 +18,9 @@ module.exports = function config(path,opts)
                     for (let j = 0; j < refs.length; j++)
                     {
                         const ref = refs[j]
-                        const backRef = backRefs.find(b => b.sourceType === name && b.sourceField === ref.name)
+
+                        const targetType = types.find( t => t.name === ref.type)
+                        const backRef = targetType.backRefs.find(b => b.sourceType === name && b.sourceField === ref.name)
                         //console.log({backRef, name, field: ref.name, backRefs})
 
                         out += `.configureRelation(${name.toUpperCase()}.${ref.name.toUpperCase()}, SourceField.OBJECT_AND_SCALAR, TargetField.${backRef != null ? "MANY" : "NONE"}, "${ref.name}", ${backRef != null ? '"' + backRef.name + '"' : "null"})${EOL}`
